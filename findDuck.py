@@ -15,7 +15,7 @@ for i in range(1,19):
 def readFiles(files):
     pixels = np.empty((0,3))
     for f in files:
-        data = cv.imread(f)
+        data = cv.imread("dataset/"+f)
         pixels = np.vstack([pixels, np.reshape(data, (-1,3))])
     # print(pixels)
     return pixels
@@ -31,16 +31,16 @@ non_duck_mean = np.mean(non_duck_pixels, 0)
 non_duck_cov = np.cov(non_duck_pixels.T)
 
 # Compute the p(x|Duck) for all trained duck & nonduck pixels
-train_duck_given_duck = mvn.pdf(duck_pixels, duck_mean, duck_cov)
-train_non_duck_probs_given_duck = mvn.pdf(non_duck_pixels, duck_mean, duck_cov)
+duck_given_duck = mvn.pdf(duck_pixels, duck_mean, duck_cov)
+non_duck_given_duck = mvn.pdf(non_duck_pixels, duck_mean, duck_cov)
 
 # Compute the p(x|nonDuck) for all trained duck & nonduck pixels
-train_duck_given_non_duck = mvn.pdf(duck_pixels, non_duck_mean, non_duck_cov)
-train_non_duck_given_non_duck = mvn.pdf(non_duck_pixels, non_duck_mean, non_duck_cov)
+duck_given_non_duck = mvn.pdf(duck_pixels, non_duck_mean, non_duck_cov)
+non_duck_given_non_duck = mvn.pdf(non_duck_pixels, non_duck_mean, non_duck_cov)
 
 # Compute the likelihood ratio p(x|Duck)/p(x|Non-Duck) for all duck & nonduck pixels
-likelihood_ratio1 = train_duck_given_duck/train_duck_given_non_duck
-likelihood_ratio2 = train_non_duck_probs_given_duck/train_non_duck_given_non_duck
+likelihood_ratio1 = duck_given_duck/duck_given_non_duck
+likelihood_ratio2 = non_duck_given_duck/non_duck_given_non_duck
 # for storing the accuracy rates of different theta values
 hit_rates = [] 
 theta_range = np.arange(0.8, 200.0, 0.5) 
